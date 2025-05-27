@@ -34,3 +34,5 @@ Thumbs.db
 # Project specific
 *.rhs
 test_data/
+tests/test_local.py  # For your local testing with real file paths
+tests/local_*.py     # Any local test files

@@ -12,8 +12,8 @@ name = "intan_importer_py"
 crate-type = ["cdylib"]
 
 [dependencies]
-# The core Rust library we're wrapping
-intan_importer = "0.2.0"
+
+intan_importer = "0.2.3"  
 
 # PyO3 for Python bindings
 pyo3 = { version = "0.22", features = ["extension-module", "abi3-py39"] }
