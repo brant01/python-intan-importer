@@ -1,0 +1,23 @@
+[package]
+name = "intan_importer_py"
+version = "0.1.0"
+edition = "2021"
+authors = ["JB"]
+license = "MIT"
+description = "Python bindings for the intan_importer crate"
+repository = "https://github.com/yourusername/python-intan-importer"
+
+[lib]
+name = "intan_importer_py"
+crate-type = ["cdylib"]
+
+[dependencies]
+# The core Rust library we're wrapping
+intan_importer = "0.2.0"
+
+# PyO3 for Python bindings
+pyo3 = { version = "0.22", features = ["extension-module", "abi3-py39"] }
+
+# For NumPy array support
+numpy = "0.22"
+ndarray = "0.15"
