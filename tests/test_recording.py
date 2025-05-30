@@ -23,6 +23,7 @@ def test_recording_time_computation():
     
     # Test time computation
     time = rec.time
+    assert time is not None, "rec.time returned None"
     assert len(time) == 30000
     assert time[0] == 0.0
     assert np.isclose(time[-1], 0.9999666666666667)  # (30000-1)/30000
