@@ -1,6 +1,4 @@
-You're right, let's make it much simpler and cleaner:
 
-```markdown
 # intan-importer
 
 Fast Python bindings for reading Intan RHS files, powered by Rust for high performance.
@@ -95,9 +93,3 @@ for i, ch in enumerate(rec.header.amplifier_channels):
 - **Digital data**: Binary (0 or 1)
 - **Stimulation data**: Microamps (µA)
 
-## License
-
-Licensed under MIT.
-```
-
-This is much cleaner and focuses on what users need to know to get started!
