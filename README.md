@@ -92,4 +92,3 @@ for i, ch in enumerate(rec.header.amplifier_channels):
 - **ADC data**: Volts (V)
 - **Digital data**: Binary (0 or 1)
 - **Stimulation data**: Microamps (µA)
-
