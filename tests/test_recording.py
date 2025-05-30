@@ -1,7 +1,8 @@
-# tests/test_recording.py
 """Tests for Recording class functionality."""
+import pytest
 import numpy as np
 from unittest.mock import Mock
+import intan_importer
 from intan_importer.core import Recording
 
 def test_recording_time_computation():
@@ -21,9 +22,8 @@ def test_recording_time_computation():
     # Create Recording
     rec = Recording(mock_rust_file)
     
-    # Test time computation
-    time = rec.time
-    assert time is not None, "rec.time returned None"
+    # Test time computation through data
+    time = rec.data.time  # Changed from rec.time to rec.data.time
     assert len(time) == 30000
     assert time[0] == 0.0
     assert np.isclose(time[-1], 0.9999666666666667)  # (30000-1)/30000

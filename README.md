@@ -1,13 +1,6 @@
 
-# intan-importer
 
 Fast Python bindings for reading Intan RHS files, powered by Rust for high performance.
-
-## Installation
-
-```bash
-pip install intan-importer
-```
 
 ## Quick Start
 
@@ -18,8 +11,8 @@ import intan_importer
 rec = intan_importer.load("data.rhs")
 
 # Access the data
-time = rec.time  # Time vector in seconds
-data = rec.data.amplifier_data  # Neural data in microvolts
+time = rec.data.time               # Time vector in seconds
+data = rec.data.amplifier_data     # Neural data in microvolts
 ```
 
 ## Data Structure
@@ -27,7 +20,6 @@ data = rec.data.amplifier_data  # Neural data in microvolts
 ```
 Recording object (rec)
 │
-├── .time                    → numpy array of time in seconds
 ├── .duration                → total duration in seconds
 ├── .num_samples             → total number of samples
 ├── .sample_rate             → sampling rate in Hz
@@ -44,6 +36,7 @@ Recording object (rec)
 │   └── .board_adc_channels  → list of ADC channel info
 │
 ├── .data (if present)
+│   ├── .time                → time vector in seconds (float64)
 │   ├── .timestamps          → sample numbers (int32)
 │   ├── .amplifier_data      → neural data (µV, int32)
 │   ├── .board_adc_data      → auxiliary inputs (V, int32)
@@ -59,11 +52,14 @@ Recording object (rec)
 
 ## Key Features
 
-### Time Vector
-The `.time` property gives you a time vector in seconds, automatically computed from timestamps and sampling rate:
+### Time Vectors
+Both time representations are available in the data object:
 ```python
-time = rec.time  # Computed once and cached
-plt.plot(time, rec.data.amplifier_data[0, :])
+time = rec.data.time          # Time in seconds (computed from timestamps)
+timestamps = rec.data.timestamps  # Raw sample numbers
+
+# Convert between them
+time_manual = timestamps / rec.sample_rate  # Same as rec.data.time
 ```
 
 ### Channel Access
@@ -85,10 +81,13 @@ for i, ch in enumerate(rec.header.amplifier_channels):
     print(f"Channel {i}: {ch.custom_channel_name} ({ch.electrode_impedance_magnitude:.0f} Ω)")
 ```
 
+
 ## Data Types
 
-- **Timestamps**: Sample numbers (divide by sample_rate for seconds)
+- **Time**: Seconds (float64)
+- **Timestamps**: Sample numbers (int32)
 - **Amplifier data**: Microvolts (µV)
 - **ADC data**: Volts (V)
 - **Digital data**: Binary (0 or 1)
 - **Stimulation data**: Microamps (µA)
+

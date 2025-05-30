@@ -6,6 +6,96 @@ from numpy.typing import NDArray
 
 from . import _lib
 
+class RhsDataWrapper:
+    """
+    Wrapper for RHS data that adds computed properties.
+    
+    This wraps the Rust RhsData object and adds the time vector.
+    """
+    
+    def __init__(self, rust_data: _lib.RhsData, sample_rate: float):
+        """Initialize with Rust data and sample rate for time computation."""
+        self._rust_data = rust_data
+        self._sample_rate = sample_rate
+        self._time_cached = None
+    
+    # ---- Time Properties ----
+    
+    @property
+    def timestamps(self) -> NDArray[np.int32]:
+        """Raw timestamps as sample numbers."""
+        return self._rust_data.timestamps
+    
+    @property
+    def time(self) -> NDArray[np.float64]:
+        """
+        Time vector in seconds.
+        
+        Computed from timestamps and sample rate. Cached after first access.
+        """
+        if self._time_cached is None:
+            self._time_cached = self.timestamps.astype(np.float64) / self._sample_rate
+        return self._time_cached
+    
+    # ---- Forward all other properties from Rust ----
+    
+    @property
+    def amplifier_data(self) -> Optional[NDArray[np.int32]]:
+        """Amplifier data in microvolts."""
+        return self._rust_data.amplifier_data
+    
+    @property
+    def dc_amplifier_data(self) -> Optional[NDArray[np.int32]]:
+        """DC amplifier data in volts."""
+        return self._rust_data.dc_amplifier_data
+    
+    @property
+    def stim_data(self) -> Optional[NDArray[np.int32]]:
+        """Stimulation data in microamps."""
+        return self._rust_data.stim_data
+    
+    @property
+    def board_adc_data(self) -> Optional[NDArray[np.int32]]:
+        """Board ADC data in volts."""
+        return self._rust_data.board_adc_data
+    
+    @property
+    def board_dac_data(self) -> Optional[NDArray[np.int32]]:
+        """Board DAC data in volts."""
+        return self._rust_data.board_dac_data
+    
+    @property
+    def board_dig_in_data(self) -> Optional[NDArray[np.int32]]:
+        """Digital input data (0 or 1)."""
+        return self._rust_data.board_dig_in_data
+    
+    @property
+    def board_dig_out_data(self) -> Optional[NDArray[np.int32]]:
+        """Digital output data (0 or 1)."""
+        return self._rust_data.board_dig_out_data
+    
+    @property
+    def compliance_limit_data(self) -> Optional[NDArray[np.bool_]]:
+        """Compliance limit status for each sample."""
+        return self._rust_data.compliance_limit_data
+    
+    @property
+    def charge_recovery_data(self) -> Optional[NDArray[np.bool_]]:
+        """Charge recovery status for each sample."""
+        return self._rust_data.charge_recovery_data
+    
+    @property
+    def amp_settle_data(self) -> Optional[NDArray[np.bool_]]:
+        """Amplifier settle status for each sample."""
+        return self._rust_data.amp_settle_data
+    
+    def __repr__(self) -> str:
+        """String representation."""
+        num_samples = len(self.timestamps)
+        duration = num_samples / self._sample_rate
+        return f"RhsData(samples={num_samples}, duration={duration:.2f}s)"
+
+
 class Recording:
     """
     Intan RHS recording with computed properties and methods.
@@ -17,7 +107,7 @@ class Recording:
     def __init__(self, rust_file: _lib.RhsFile):
         """Initialize from Rust RhsFile object."""
         self._rust_file = rust_file
-        self._time_cached = None
+        self._data_wrapped = None
         
     # ---- Core Properties (from Rust) ----
     
@@ -27,9 +117,18 @@ class Recording:
         return self._rust_file.header
     
     @property
-    def data(self) -> Optional[_lib.RhsData]:
-        """Raw data arrays if present."""
-        return self._rust_file.data
+    def data(self) -> Optional[RhsDataWrapper]:
+        """Data arrays with time vector if present."""
+        if self._rust_file.data is None:
+            return None
+            
+        # Create wrapper on first access
+        if self._data_wrapped is None:
+            self._data_wrapped = RhsDataWrapper(
+                self._rust_file.data, 
+                self.header.sample_rate
+            )
+        return self._data_wrapped
     
     @property
     def data_present(self) -> bool:
@@ -42,27 +141,6 @@ class Recording:
         return self._rust_file.source_files
     
     # ---- Computed Properties ----
-    
-    @property
-    def time(self) -> Optional[NDArray[np.float64]]:
-        """
-        Time vector in seconds.
-        
-        Computed from timestamps and sample rate. Cached after first access.
-        
-        Returns:
-            Time in seconds for each sample, or None if no data.
-        """
-        if not self.data:
-            return None
-            
-        if self._time_cached is None:
-            # Convert timestamps to seconds and cache
-            self._time_cached = (
-                self.data.timestamps.astype(np.float64) / self.header.sample_rate
-            )
-        
-        return self._time_cached
     
     @property
     def duration(self) -> float:
