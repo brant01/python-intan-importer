@@ -2,6 +2,8 @@
 
 Fast Python bindings for reading Intan RHS files, powered by Rust for high performance.
 
+> **Note**: Version 0.2.0 introduces a breaking change - analog data arrays now return float64 values in physical units instead of raw int32 ADC values. See [MIGRATION_GUIDE_v0.2.0.md](MIGRATION_GUIDE_v0.2.0.md) for details.
+
 ## Quick Start
 
 ```python
@@ -38,8 +40,8 @@ Recording object (rec)
 ├── .data (if present)
 │   ├── .time                → time vector in seconds (float64)
 │   ├── .timestamps          → sample numbers (int32)
-│   ├── .amplifier_data      → neural data (µV, int32)
-│   ├── .board_adc_data      → auxiliary inputs (V, int32)
+│   ├── .amplifier_data      → neural data (µV, float64)
+│   ├── .board_adc_data      → auxiliary inputs (V, float64)
 │   ├── .board_dig_in_data   → digital inputs (0 or 1)
 │   ├── .stim_data           → stimulation current (µA)
 │   └── ... (other optional data types)

@@ -1,6 +1,6 @@
 [package]
 name = "intan_importer_py"
-version = "0.1.0"
+version = "0.2.0"
 edition = "2021"
 authors = ["JB"]
 license = "MIT"
@@ -13,7 +13,7 @@ crate-type = ["cdylib"]
 
 [dependencies]
 
-intan_importer = "0.2.3"  
+intan_importer = "0.2.4"  
 
 # PyO3 for Python bindings
 pyo3 = { version = "0.22", features = ["extension-module", "abi3-py39"] }

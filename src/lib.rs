@@ -201,14 +201,14 @@ impl RhsData {
     
     /// Get amplifier data as a NumPy array (μV, shape: [channels, samples])
     #[getter]
-    fn amplifier_data<'py>(&self, py: Python<'py>) -> Option<Bound<'py, PyArray2<i32>>> {
+    fn amplifier_data<'py>(&self, py: Python<'py>) -> Option<Bound<'py, PyArray2<f64>>> {
         self.inner.amplifier_data.as_ref()
             .map(|data| data.clone().into_pyarray_bound(py))
     }
     
     /// Get DC amplifier data as a NumPy array (V, shape: [channels, samples])
     #[getter]
-    fn dc_amplifier_data<'py>(&self, py: Python<'py>) -> Option<Bound<'py, PyArray2<i32>>> {
+    fn dc_amplifier_data<'py>(&self, py: Python<'py>) -> Option<Bound<'py, PyArray2<f64>>> {
         self.inner.dc_amplifier_data.as_ref()
             .map(|data| data.clone().into_pyarray_bound(py))
     }
@@ -243,14 +243,14 @@ impl RhsData {
     
     /// Get board ADC data as a NumPy array (V, shape: [channels, samples])
     #[getter]
-    fn board_adc_data<'py>(&self, py: Python<'py>) -> Option<Bound<'py, PyArray2<i32>>> {
+    fn board_adc_data<'py>(&self, py: Python<'py>) -> Option<Bound<'py, PyArray2<f64>>> {
         self.inner.board_adc_data.as_ref()
             .map(|data| data.clone().into_pyarray_bound(py))
     }
     
     /// Get board DAC data as a NumPy array (V, shape: [channels, samples])
     #[getter]
-    fn board_dac_data<'py>(&self, py: Python<'py>) -> Option<Bound<'py, PyArray2<i32>>> {
+    fn board_dac_data<'py>(&self, py: Python<'py>) -> Option<Bound<'py, PyArray2<f64>>> {
         self.inner.board_dac_data.as_ref()
             .map(|data| data.clone().into_pyarray_bound(py))
     }
@@ -376,7 +376,7 @@ fn _lib(m: &Bound<'_, PyModule>) -> PyResult<()> {
     m.add_class::<ChannelInfo>()?;
     
     // Add module metadata
-    m.add("__version__", "0.1.0")?;
+    m.add("__version__", "0.2.0")?;
     m.add("__doc__", "Low-level bindings for intan_importer")?;
     
     Ok(())
